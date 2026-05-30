@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from hcloud import Client as HCloudClient
 
@@ -10,9 +9,9 @@ from src.lang import Dialogs
 logger = logging.getLogger(__name__)
 
 
-async def _fetch_usage(hclient: HCloudClient) -> List[dict]:
+async def _fetch_usage(hclient: HCloudClient) -> list[dict]:
     servers = hclient.servers.get_all()
-    usage: List[dict] = []
+    usage: list[dict] = []
     for srv in servers:
         outgoing_gb = round(((srv.outgoing_traffic or 0) / 1024**3), 3)
         included_gb = round(((getattr(srv, "included_traffic", 0) or 0) / 1024**3), 3)

@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from typing import Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from eiogram.types import User as EioUser, Message, CallbackQuery
 from sqlalchemy import String, BigInteger, DateTime, Integer, Text, JSON
 from sqlalchemy.sql import select, delete
@@ -35,18 +35,18 @@ class UserMessage(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now(), nullable=False)
 
     @classmethod
-    async def _get_chat_id(cls, update: Union[Message, CallbackQuery]) -> int:
+    async def _get_chat_id(cls, update: Message | CallbackQuery) -> int:
         message = update.message if isinstance(update, CallbackQuery) else update
         return message.chat.id
 
     @classmethod
-    async def add(cls, update: Union[Message, CallbackQuery]) -> None:
+    async def add(cls, update: Message | CallbackQuery) -> None:
         async with GetDB() as db:
             message = update.message if isinstance(update, CallbackQuery) else update
             db.add(UserMessage(chat_id=message.chat.id, message_id=message.message_id))
 
     @classmethod
-    async def clear(cls, update: Union[Message, CallbackQuery], *, keep_current: bool = False) -> None:
+    async def clear(cls, update: Message | CallbackQuery, *, keep_current: bool = False) -> None:
         async with GetDB() as db:
             chat_id = await cls._get_chat_id(update)
             message_id = getattr(
@@ -77,7 +77,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
     full_name: Mapped[str] = mapped_column(String(256), nullable=False)
-    username: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    username: Mapped[str | None] = mapped_column(String(128), nullable=True)
     join_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
     online_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
@@ -86,7 +86,7 @@ class User(Base):
     def client_ids(self) -> set[int]:
         return {access.client_id for access in self.server_accesses}
 
-    def get_server_ids(self, client_id: Optional[int] = None) -> set[int]:
+    def get_server_ids(self, client_id: int | None = None) -> set[int]:
         if client_id is not None:
             return {access.server_id for access in self.server_accesses if access.client_id == client_id}
         return {access.server_id for access in self.server_accesses}
@@ -96,13 +96,13 @@ class User(Base):
         return self.id in TELEGRAM_ADMINS_ID
 
     @classmethod
-    async def get_by_id(cls, db: AsyncSession, id: int) -> Optional["User"]:
+    async def get_by_id(cls, db: AsyncSession, id: int) -> "User | None":
         result = await db.execute(select(cls).where(cls.id == id))
         user = result.scalars().first()
         return user
 
     @classmethod
-    async def upsert(cls, db: AsyncSession, *, user: EioUser) -> Optional["User"]:
+    async def upsert(cls, db: AsyncSession, *, user: EioUser) -> "User | None":
         dbuser = await cls.get_by_id(db, user.id)
         if dbuser:
             dbuser.full_name = user.full_name

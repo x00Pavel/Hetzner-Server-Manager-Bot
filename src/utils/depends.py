@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Annotated
+from typing import Annotated
 
 from eiogram.state import StateManager
 from eiogram.types import Update
@@ -13,7 +13,7 @@ async def clear_state(db: AsyncSession, state: StateManager) -> None:
     await state.clear_state(db=db)
 
 
-async def get_hetzner(db: AsyncSession, state_data: dict) -> Optional[hcloud_client]:
+async def get_hetzner(db: AsyncSession, state_data: dict) -> hcloud_client | None:
     client_id = state_data.get("client_id")
     if client_id is None:
         logging.warning("Dependency injection failed: No client_id found in state data.")
@@ -35,6 +35,6 @@ async def should_be_owner(update: Update, dbuser: User, db: AsyncSession) -> Non
         raise Exception("Access Denied")
 
 
-GetHetzner = Annotated[Optional[hcloud_client], Depends(get_hetzner)]
+GetHetzner = Annotated[hcloud_client | None, Depends(get_hetzner)]
 ClearState = Annotated[None, Depends(clear_state)]
 ShouldBeOwner = Annotated[None, Depends(should_be_owner)]

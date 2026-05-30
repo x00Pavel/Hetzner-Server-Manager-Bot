@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any
 from eiogram.state.storage import BaseStorage
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,7 +6,7 @@ from src.db import UserState, GetDB
 
 
 class DatabaseStorage(BaseStorage):
-    async def _get_or_create(self, key: Union[int, str], db: AsyncSession) -> UserState:
+    async def _get_or_create(self, key: int | str, db: AsyncSession) -> UserState:
         stmt = await db.execute(select(UserState).where(UserState.id == key))
         user = stmt.scalar_one_or_none()
         if not user:
@@ -15,7 +15,7 @@ class DatabaseStorage(BaseStorage):
             await db.flush()
         return user
 
-    async def get_state(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> Optional[Dict[str, Any]]:
+    async def get_state(self, key: int | str, db: AsyncSession | None = None) -> dict[str, Any] | None:
         if db:
             user = await self._get_or_create(key, db)
             return user.state
@@ -23,7 +23,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.get_state(key, db)
 
-    async def get_context(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> Optional[Dict[str, Any]]:
+    async def get_context(self, key: int | str, db: AsyncSession | None = None) -> dict[str, Any] | None:
         if db:
             user = await self._get_or_create(key, db)
             return {"state": user.state, "data": user.data}
@@ -33,11 +33,11 @@ class DatabaseStorage(BaseStorage):
 
     async def upsert_context(
         self,
-        key: Union[int, str],
-        state: Dict[str, Any],
-        db: Optional[AsyncSession] = None,
+        key: int | str,
+        state: dict[str, Any],
+        db: AsyncSession | None = None,
         **data: Any,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         if db:
             user = await self._get_or_create(key, db)
             user.state = state
@@ -51,9 +51,9 @@ class DatabaseStorage(BaseStorage):
 
     async def set_state(
         self,
-        key: Union[int, str],
-        state: Dict[str, Any],
-        db: Optional[AsyncSession] = None,
+        key: int | str,
+        state: dict[str, Any],
+        db: AsyncSession | None = None,
     ) -> None:
         if db:
             user = await self._get_or_create(key, db)
@@ -63,7 +63,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.set_state(key, state, db)
 
-    async def upsert_data(self, key: Union[int, str], db: Optional[AsyncSession] = None, **data: Any) -> None:
+    async def upsert_data(self, key: int | str, db: AsyncSession | None = None, **data: Any) -> None:
         if db:
             user = await self._get_or_create(key, db)
             current_data = user.data or {}
@@ -74,7 +74,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.upsert_data(key, db, **data)
 
-    async def get_data(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> Dict[str, Any]:
+    async def get_data(self, key: int | str, db: AsyncSession | None = None) -> dict[str, Any]:
         if db:
             user = await self._get_or_create(key, db)
             return user.data
@@ -82,7 +82,7 @@ class DatabaseStorage(BaseStorage):
         async with GetDB() as db:
             return await self.get_data(key, db)
 
-    async def clear_state(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> None:
+    async def clear_state(self, key: int | str, db: AsyncSession | None = None) -> None:
         if db:
             user = await self._get_or_create(key, db)
             user.state = None
@@ -91,7 +91,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.clear_state(key, db)
 
-    async def clear_data(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> None:
+    async def clear_data(self, key: int | str, db: AsyncSession | None = None) -> None:
         if db:
             user = await self._get_or_create(key, db)
             user.data = {}
@@ -100,7 +100,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.clear_data(key, db)
 
-    async def clear_all(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> None:
+    async def clear_all(self, key: int | str, db: AsyncSession | None = None) -> None:
         if db:
             user = await self._get_or_create(key, db)
             user.data = {}

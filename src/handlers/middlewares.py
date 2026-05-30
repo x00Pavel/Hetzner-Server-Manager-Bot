@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, Awaitable
+from collections.abc import Callable, Awaitable
+from typing import Any
 from eiogram.middleware import BaseMiddleware
 from eiogram.types import Update
 from src.db import GetDB, User, UserMessage
@@ -10,9 +11,9 @@ class Middleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[[Update, Dict[str, Any]], Awaitable[Any]],
+        handler: Callable[[Update, dict[str, Any]], Awaitable[Any]],
         update: Update,
-        data: Dict[str, Any],
+        data: dict[str, Any],
     ):
         async with GetDB() as db:
             user = update.origin.from_user

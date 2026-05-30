@@ -1,6 +1,5 @@
-from sqlalchemy import BigInteger, Integer, ForeignKey
+from sqlalchemy import BigInteger, Integer, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core import Base

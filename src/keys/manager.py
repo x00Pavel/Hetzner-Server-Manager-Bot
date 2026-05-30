@@ -1,4 +1,3 @@
-from typing import List
 from eiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from eiogram.utils.inline_builder import InlineKeyboardBuilder
 from hcloud.servers import Server
@@ -28,7 +27,7 @@ class BotKB:
         )
 
     @classmethod
-    def home(cls, *, clients: List[Client], is_owner: bool = False) -> InlineKeyboardMarkup:
+    def home(cls, *, clients: list[Client], is_owner: bool = False) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for client in clients:
             kb.add(
@@ -138,7 +137,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def servers_menu(cls, servers: List[Server]) -> InlineKeyboardMarkup:
+    def servers_menu(cls, servers: list[Server]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         emoji = {"starting": "🟡", "stopping": "🔴", "running": "🟢", "off": "🔴"}
         for server in servers:
@@ -218,7 +217,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def images_select(cls, images: List[Image], task: TaskType, target: int = 0) -> InlineKeyboardMarkup:
+    def images_select(cls, images: list[Image], task: TaskType, target: int = 0) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for image in images:
             kb.add(
@@ -234,7 +233,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def datacenters_select(cls, datacenters: List[Datacenter]) -> InlineKeyboardMarkup:
+    def datacenters_select(cls, datacenters: list[Datacenter]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for datacenter in datacenters:
             kb.add(
@@ -250,7 +249,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def plans_select(cls, plans: List[ServerType]) -> InlineKeyboardMarkup:
+    def plans_select(cls, plans: list[ServerType]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for plan in plans:
             kb.add(
@@ -266,7 +265,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def upgrade_plans_select(cls, plans: List[ServerType], server_id: int) -> InlineKeyboardMarkup:
+    def upgrade_plans_select(cls, plans: list[ServerType], server_id: int) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for plan in plans:
             kb.add(
@@ -282,7 +281,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def snapshots_menu(cls, snapshots: List[Image]) -> InlineKeyboardMarkup:
+    def snapshots_menu(cls, snapshots: list[Image]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for snapshot in snapshots:
             kb.add(
@@ -336,7 +335,7 @@ class BotKB:
 
     @classmethod
     def snapshots_select_server(
-        cls, servers: List[Server], task: TaskType = TaskType.CREATE, target: int = 0
+        cls, servers: list[Server], task: TaskType = TaskType.CREATE, target: int = 0
     ) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for server in servers:
@@ -353,7 +352,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def primary_ips_menu(cls, primary_ips: List[PrimaryIP]) -> InlineKeyboardMarkup:
+    def primary_ips_menu(cls, primary_ips: list[PrimaryIP]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for primary_ip in primary_ips:
             kb.add(
@@ -410,7 +409,7 @@ class BotKB:
 
     @classmethod
     def primary_ips_select_server(
-        cls, servers: List[Server], task: TaskType = TaskType.UPDATE, target: int = 0
+        cls, servers: list[Server], task: TaskType = TaskType.UPDATE, target: int = 0
     ) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for server in servers:
@@ -428,7 +427,7 @@ class BotKB:
 
     @classmethod
     def primary_ips_select_datacenter(
-        cls, datacenters: List[Datacenter], task: TaskType = TaskType.CREATE, target: int = 0
+        cls, datacenters: list[Datacenter], task: TaskType = TaskType.CREATE, target: int = 0
     ) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for datacenter in datacenters:
@@ -445,7 +444,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def servers_primary_ips_select(cls, primary_ips: List[PrimaryIP]) -> InlineKeyboardMarkup:
+    def servers_primary_ips_select(cls, primary_ips: list[PrimaryIP]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for primary_ip in primary_ips:
             kb.add(
