@@ -38,14 +38,14 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/erfjab/servermanagerbot:pr-${{ github.event.pull_request.number }}
+            ghcr.io/${{ github.repository_owner }}/servermanagerbot:pr-${{ github.event.pull_request.number }}
 
       - name: Print Success Message
         if: success()
         run: |
           echo "✅ Docker Image built successfully!"
           echo "You can test it using the following command:"
-          echo "docker run -it --rm ghcr.io/erfjab/servermanagerbot:pr-${{ github.event.pull_request.number }}"
+          echo "docker run -it --rm ghcr.io/${{ github.repository_owner }}/servermanagerbot:pr-${{ github.event.pull_request.number }}"
 
       - name: Print Failure Message
         if: failure()

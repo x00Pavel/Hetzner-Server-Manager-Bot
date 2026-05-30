@@ -7,7 +7,6 @@ from eiogram.filters import IgnoreStateFilter
 from src.db import UserMessage, User
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.utils.depends import GetHetzner, ClearState
-from src.utils.euro import get_euro
 from src.lang import Dialogs
 
 
@@ -43,13 +42,8 @@ async def servers_info(
     if prices:
         hourly = float(prices[0]["price_hourly"]["gross"])
         monthly = float(prices[0]["price_monthly"]["gross"])
-        try:
-            euro_rate = await get_euro()
-            price_hourly = f"{hourly:.4f}€ [{hourly * euro_rate:,.0f}T]"
-            price_monthly = f"{monthly:.2f}€ [{monthly * euro_rate:,.0f}T]"
-        except Exception:
-            price_hourly = f"{hourly:.4f}€"
-            price_monthly = f"{monthly:.2f}€"
+        price_hourly = f"{hourly:.4f}€"
+        price_monthly = f"{monthly:.2f}€"
 
     text = Dialogs.SERVERS_INFO.format(
         name=server.name,

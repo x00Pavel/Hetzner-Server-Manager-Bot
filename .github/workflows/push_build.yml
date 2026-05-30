@@ -39,6 +39,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/erfjab/servermanagerbot:ga
-            ghcr.io/erfjab/servermanagerbot:${{ github.sha }}
-            ghcr.io/erfjab/servermanagerbot:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/servermanagerbot:ga
+            ghcr.io/${{ github.repository_owner }}/servermanagerbot:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/servermanagerbot:${{ github.ref_name }}

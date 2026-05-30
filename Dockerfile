@@ -1,17 +1,34 @@
-FROM python:3.11.8-alpine
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim AS builder
 
-ENV TZ=Asia/Tehran \
-    PYTHONUNBUFFERED=1
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
 
-WORKDIR /code
+WORKDIR /app
 
-RUN apk add --no-cache tzdata && \
-    cp /usr/share/zoneinfo/Asia/Tehran /etc/localtime && \
-    echo "Asia/Tehran" > /etc/timezone && \
-    pip install --no-cache-dir --upgrade uv && \
-    rm -rf /var/cache/apk/*
+# Install dependencies first (cached layer — only invalidated when lockfile changes)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev
 
 COPY . .
-RUN chmod +x main.py
 
-CMD ["sh", "-c", "uv sync && uv run alembic upgrade head && uv run main.py"]
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
+
+
+FROM python:3.11-slim-bookworm
+
+ENV TZ=Europe/Prague \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH"
+
+RUN apt-get update && apt-get install -y --no-install-recommends tzdata && \
+    ln -sf /usr/share/zoneinfo/Europe/Prague /etc/localtime && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+CMD ["sh", "-c", "alembic upgrade head && python main.py"]

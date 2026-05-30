@@ -1,22 +1,20 @@
 services:
   servermanagerbot:
-    image: ghcr.io/erfjab/servermanagerbot:latest
+    build: .
     restart: always
     env_file:
       - .env
-    network_mode: "host"
 
   postgres:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: ""
-      POSTGRES_USER: ""
-      POSTGRES_PASSWORD: ""
+      POSTGRES_DB: "servermanagerbot"
+      POSTGRES_USER: "botuser"
+      POSTGRES_PASSWORD: "sm_bot_pass_2026"
       PGPORT: 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    network_mode: "host"
 
 volumes:
   postgres_data:
