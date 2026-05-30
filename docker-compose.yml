@@ -1,6 +1,7 @@
 services:
   servermanagerbot:
     build: .
+    image: ghcr.io/x00pavel/servermanagerbot:latest
     restart: always
     env_file:
       - .env
